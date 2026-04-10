@@ -113,7 +113,9 @@
         }
 
         .contact-btn {
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 12px 30px;
             background: rgba(255, 255, 255, 0.9);
             color: #1a1a1a;
@@ -125,9 +127,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             width: 100%;
             max-width: 280px;
+            cursor: pointer;
         }
 
-        .contact-btn:hover {
+        .contact-btn:hover:not(.loading) {
             transform: translateY(-3px);
             background: #ffffff;
             box-shadow: 0 6px 20px rgba(255,255,255,0.4);
@@ -139,9 +142,45 @@
             color: #ffffff;
         }
         
-        .primary-btn:hover {
+        .primary-btn:hover:not(.loading) {
             background: rgba(68, 145, 78, 1);
             box-shadow: 0 6px 20px rgba(58, 125, 68, 0.4);
+        }
+
+        /* Loading State Styles */
+        .contact-btn.loading {
+            opacity: 0.8;
+            cursor: wait;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+        }
+
+        .loading-text {
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .loading .default-text {
+            display: none;
+        }
+
+        .loading .loading-text {
+            display: inline-block;
         }
 
         .shambho {
@@ -155,6 +194,10 @@
         @keyframes floatIn {
             0% { opacity: 0; transform: translateY(30px); }
             100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 600px) {
@@ -179,7 +222,11 @@
             <p>Our mission to bring <span class="highlight">love, light, and laughter in the world</span>—and science-backed regeneration—to the soil remains unchanged.</p>
             
             <div class="button-group">
-                <a href="https://projectvidhai.sankalp.life" class="contact-btn primary-btn">Try Vidhai</a>
+                <a href="https://projectvidhai.sankalp.life" id="try-vidhai-btn" class="contact-btn primary-btn">
+                    <span class="spinner"></span>
+                    <span class="default-text">Try Vidhai</span>
+                    <span class="loading-text">Waking up server (~15s)...</span>
+                </a>
                 <a href="mailto:sankalpkarthi3@gmail.com" class="contact-btn">Say Hello</a>
             </div>
 
@@ -187,5 +234,23 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('try-vidhai-btn').addEventListener('click', function(e) {
+            // Check if it's already loading to prevent multiple clicks
+            if (this.classList.contains('loading')) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Add the loading class to trigger CSS changes
+            this.classList.add('loading');
+            
+            // The browser will naturally wait on this page while fetching the target URL.
+            // If the user comes back to this tab, we can optionally reset it after a long timeout.
+            setTimeout(() => {
+                this.classList.remove('loading');
+            }, 20000); // Resets the button after 20 seconds as a fallback
+        });
+    </script>
 </body>
 </html>
